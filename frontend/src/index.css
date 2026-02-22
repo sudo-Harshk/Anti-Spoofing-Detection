@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  --color-brand: #0f172a;
+  --color-accent: #10b981;
+  --color-accent-soft: #ecfdf5;
+  --color-danger: #ef4444;
+  --color-danger-soft: #fef2f2;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .card-premium {
+    @apply bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl transition-all duration-200 hover:bg-slate-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .stat-card {
+    @apply p-4 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between;
+  }
+}
