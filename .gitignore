@@ -1,6 +1,3 @@
-# ----------------------------------------------------------------------
-# Environment Variables & Security
-# ----------------------------------------------------------------------
 .env
 .env.*
 .env.local
@@ -10,10 +7,6 @@
 *.pem
 *.key
 
-# ----------------------------------------------------------------------
-# Backend (Python / FastAPI)
-# ----------------------------------------------------------------------
-# Virtual Environments
 venv/
 env/
 .venv/
@@ -21,13 +14,10 @@ ENV/
 env.bak/
 venv.bak/
 
-# Compiled Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
-# Distribution / Packaging
 build/
 develop-eggs/
 dist/
@@ -46,13 +36,11 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Installer logs & PyInstaller
 pip-log.txt
 pip-delete-this-directory.txt
 *.manifest
 *.spec
 
-# Unit test / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -67,18 +55,11 @@ coverage.xml
 .pytest_cache/
 cover/
 
-# ----------------------------------------------------------------------
-# Frontend (Node / React / Vite)
-# ----------------------------------------------------------------------
-# Dependencies
 node_modules/
-
-# Production / Build output
 dist
 dist-ssr
 *.local
 
-# Logs
 logs
 *.log
 npm-debug.log*
@@ -93,18 +74,12 @@ lerna-debug.log*
 *.sqlite3
 db.sqlite3
 
-# ----------------------------------------------------------------------
-# OS / IDE / Editor
-# ----------------------------------------------------------------------
-# VSCode
+
 .vscode/*
 !.vscode/extensions.json
-
-# IntelliJ / PyCharm / WebStorm
 .idea/
 *.iml
 
-# MacOS / Windows OS generated files
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -123,7 +98,6 @@ ehthumbs_vista.db
 *.stackdump
 [Dd]esktop.ini
 
-# Emacs, Vim, Visual Studio
 *~
 *.sw[a-p]
 *.swp
@@ -134,14 +108,8 @@ ehthumbs_vista.db
 *.njsproj
 *.sln
 
-# ----------------------------------------------------------------------
-# Machine Learning & File Uploads
-# ----------------------------------------------------------------------
-# Hugging Face local caches (if downloaded locally)
 .cache/huggingface/
 huggingface/
-
-# Large model weights (Prevents accidentally pushing 500MB+ ViT/YOLO files)
 *.pt
 *.pth
 *.onnx
@@ -150,7 +118,6 @@ huggingface/
 *.h5
 *.pkl
 
-# Test images and FastAPI temporary uploads
 uploads/
 /test
 test_images/
