@@ -632,6 +632,16 @@ export default function LandingPage() {
               </div>
 
               <div className="relative">
+                <div
+                  className="absolute -right-2 -z-10 w-[92%] max-w-md rotate-2 rounded-2xl border border-white/20 bg-white/10 p-6 text-white shadow-lg md:-right-4 md:top-6"
+                  aria-hidden
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">Dual engines</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">Hugging Face</span>
+                    <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">Roboflow</span>
+                  </div>
+                </div>
                 <div className="absolute -inset-3 -z-10 rounded-2xl border border-white/15 bg-white/10 blur-sm" aria-hidden />
                 <VerdictPreviewCard />
               </div>
