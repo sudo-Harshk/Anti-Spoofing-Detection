@@ -1,54 +1,65 @@
 @import "tailwindcss";
 
 @theme {
-  /* Pastel system: squid-ink base + periwinkle/mint accents */
-  --color-ivory: #FAFAFC;
-  --color-light-yellow: #EEF2FF;
-  --color-smoke: #F3F5FA;
-  --color-extra-light-gray: #E3E7F2;
-  --color-light-gray: #A7AFC3;
-  --color-gray-warm: #77819A;
-  --color-dark-gray: #5A637A;
-  --color-extra-dark-gray: #3A4256;
-  --color-apron-black: #0B1020;
-  /* keep token name `orange` for existing class usage (now periwinkle) */
-  --color-orange: #AFC3FF;
-  --color-green-warm: #A7E6D2;
-  --color-brown: #C7B8FF;
-  --color-favorite-pink: #F2B6D2;
-  --color-notice-red: #F4B8B8;
+  /* Design system (landing) */
+  --color-bg: #F4EFEA;
+  --color-surface: #FFFFFF;
+  --color-border: #E6E1DC;
+  --color-text: #1A1A1A;
+  --color-muted: #6B6B6B;
+
+  --color-primary: #1F4ED8;         /* deep blue CTA */
+  --color-secondary: #2F6B4F;       /* green feature card */
+  --color-accent-yellow: #F4C542;
+  --color-accent-orange: #F28C38;
+  --color-accent-blue-light: #E8F0FE;
+
+  /* Back-compat tokens used elsewhere (/detect), now mapped to new palette */
+  --color-ivory: var(--color-bg);
+  --color-smoke: var(--color-accent-blue-light);
+  --color-extra-light-gray: var(--color-border);
+  --color-light-gray: color-mix(in oklab, var(--color-muted) 55%, white);
+  --color-gray-warm: var(--color-muted);
+  --color-dark-gray: color-mix(in oklab, var(--color-text) 70%, white);
+  --color-extra-dark-gray: color-mix(in oklab, var(--color-text) 88%, white);
+  --color-apron-black: var(--color-text);
+
+  /* token name kept for existing class usage */
+  --color-orange: var(--color-accent-orange);
+  --color-green-warm: color-mix(in oklab, var(--color-secondary) 35%, white);
+  --color-brown: color-mix(in oklab, var(--color-primary) 28%, white);
+  --color-favorite-pink: color-mix(in oklab, var(--color-accent-orange) 30%, white);
+  --color-notice-red: #E05656;
 }
 
 @layer base {
   body {
-    @apply bg-ivory text-apron-black antialiased;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans CJK JP", sans-serif;
+    @apply bg-bg text-text antialiased;
+    font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  :focus-visible {
+    outline: 3px solid color-mix(in oklab, var(--color-primary) 55%, white);
+    outline-offset: 3px;
+    border-radius: 10px;
   }
 }
 
 @layer components {
-  /* cards: thin border, no heavy shadow */
+  /* cards: warm border + subtle shadow */
   .card-premium {
-    @apply bg-white border border-extra-light-gray rounded-2xl transition-all duration-200 hover:border-light-gray;
+    @apply bg-surface border border-border rounded-2xl transition-all duration-200;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   }
+  .card-premium:hover { transform: translateY(-2px) scale(1.01); }
 
-  .btn-primary {
-    @apply inline-flex items-center gap-2 px-6 py-3 rounded-full bg-orange text-white font-bold text-sm
-           transition-all duration-150 hover:opacity-90 active:scale-95
-           disabled:opacity-40 disabled:cursor-not-allowed;
-  }
-
-  .stat-card {
-    @apply p-4 bg-smoke border border-extra-light-gray rounded-xl flex items-center justify-between;
-  }
-
-  /* squid-ink pastel hover */
+  /* softer hover card used in landing */
   .card-ink {
-    @apply bg-ivory border border-extra-light-gray rounded-2xl transition-all duration-200;
+    @apply bg-surface border border-border rounded-2xl transition-all duration-200;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   }
-
   .card-ink::before {
     content: "";
     position: absolute;
@@ -56,29 +67,41 @@
     opacity: 0;
     transition: opacity 180ms ease;
     background:
-      radial-gradient(700px 320px at 20% 15%, color-mix(in oklab, var(--color-orange) 22%, transparent) 0%, transparent 60%),
-      radial-gradient(560px 260px at 85% 85%, color-mix(in oklab, var(--color-green-warm) 22%, transparent) 0%, transparent 62%);
+      radial-gradient(720px 340px at 12% 10%, color-mix(in oklab, var(--color-accent-blue-light) 92%, transparent) 0%, transparent 60%),
+      radial-gradient(620px 300px at 88% 85%, color-mix(in oklab, var(--color-accent-yellow) 28%, transparent) 0%, transparent 62%);
     pointer-events: none;
   }
-
-  .card-ink:hover {
-    transform: translateY(-3px);
-    border-color: color-mix(in oklab, var(--color-orange) 38%, var(--color-extra-light-gray));
-    box-shadow: 0 18px 50px rgba(11, 16, 32, 0.12);
-  }
-
-  .card-ink:hover::before {
-    opacity: 1;
-  }
+  .card-ink:hover::before { opacity: 1; }
+  .card-ink:hover { transform: translateY(-2px) scale(1.01); }
 
   /* badges */
-  .badge-real  { @apply bg-[#8ED7BE26] text-[#2E6D5B] font-bold; }
-  .badge-spoof { @apply bg-[#F0A6A626] text-[#8A3D3D] font-bold; }
-  .badge-warn  { @apply bg-[#AFC3FF26] text-[#3D4A8A] font-bold; }
+  .badge-real  { @apply bg-[#DFF3EA] text-[#1F5E3F] font-bold; }
+  .badge-spoof { @apply bg-[#FBE3E3] text-[#8A2E2E] font-bold; }
+  .badge-warn  { @apply bg-[#FFF2D1] text-[#7A4B00] font-bold; }
 
   /* verdict blocks */
-  .verdict-real  { @apply bg-[#8ED7BE14] border-[#8ED7BE55] text-extra-dark-gray; }
-  .verdict-spoof { @apply bg-[#F0A6A614] border-[#F0A6A655] text-apron-black; }
-  .verdict-error { @apply bg-smoke border-extra-light-gray text-apron-black; }
-  .verdict-warn  { @apply bg-[#AFC3FF14] border-[#AFC3FF55] text-extra-dark-gray; }
+  .verdict-real  { @apply bg-[#DFF3EA] border-[#A9D8C3] text-text; }
+  .verdict-spoof { @apply bg-[#FBE3E3] border-[#F0B5B5] text-text; }
+  .verdict-error { @apply bg-accent-blue-light border-border text-text; }
+  .verdict-warn  { @apply bg-[#FFF2D1] border-[#F2D58A] text-text; }
+
+  .float-drift {
+    animation: floatDrift 10s ease-in-out infinite;
+  }
+
+  /* Grad-CAM-style heatmap mock (CSS overlay on face captures) */
+  .heatmap-mock {
+    background:
+      radial-gradient(120px 90px at 58% 38%, color-mix(in oklab, var(--color-accent-orange) 55%, transparent) 0%, transparent 72%),
+      radial-gradient(100px 80px at 42% 52%, color-mix(in oklab, var(--color-accent-yellow) 45%, transparent) 0%, transparent 70%),
+      radial-gradient(90px 70px at 72% 58%, color-mix(in oklab, var(--color-accent-orange) 40%, transparent) 0%, transparent 68%),
+      radial-gradient(140px 100px at 48% 72%, color-mix(in oklab, var(--color-primary) 18%, transparent) 0%, transparent 75%);
+    mix-blend-mode: multiply;
+    opacity: 0.88;
+  }
+}
+
+@keyframes floatDrift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
 }
