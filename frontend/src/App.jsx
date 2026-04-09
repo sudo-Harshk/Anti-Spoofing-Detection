@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,7 +12,8 @@ import {
   ScanFace,
   Info,
   Layers,
-  Sparkles
+  Sparkles,
+  ArrowLeft,
 } from 'lucide-react';
 
 const API_BASE = 'http://127.0.0.1:8000';
@@ -29,9 +31,9 @@ function badgeTone(isReal, rawLabel) {
 }
 
 function badgeClass(tone) {
-  if (tone === 'emerald') return 'bg-emerald-100 text-emerald-700';
-  if (tone === 'amber') return 'bg-amber-100 text-amber-800';
-  return 'bg-rose-100 text-rose-700';
+  if (tone === 'emerald') return 'badge-real';
+  if (tone === 'amber') return 'badge-warn';
+  return 'badge-spoof';
 }
 
 function formatApiDetail(err) {
@@ -44,21 +46,13 @@ function formatApiDetail(err) {
 function getVerdictStyle(verdict) {
   switch (verdict) {
     case 'REAL':
-      return {
-        bg: 'bg-emerald-50',
-        border: 'border-emerald-200',
-        text: 'text-emerald-900'
-      };
+      return { compound: 'verdict-real' };
     case 'SPOOF':
-      return {
-        bg: 'bg-rose-50',
-        border: 'border-rose-200',
-        text: 'text-rose-900'
-      };
+      return { compound: 'verdict-spoof' };
     case 'ERROR':
-      return { bg: 'bg-slate-100', border: 'border-slate-300', text: 'text-slate-900' };
+      return { compound: 'verdict-error' };
     default:
-      return { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-900' };
+      return { compound: 'verdict-warn' };
   }
 }
 
@@ -71,7 +65,7 @@ function ModelResultCard({ title, icon: Icon, detail, verdict, verdictConfidence
   return (
     <div className="card-premium p-8">
       {verdict != null && vs && (
-        <div className={`mb-6 rounded-xl border-2 p-5 ${vs.bg} ${vs.border} ${vs.text}`}>
+        <div className={`mb-6 rounded-xl border-2 p-5 ${vs.compound}`}>
           <p className="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">System outcome</p>
           <p className="text-3xl font-black">{verdict}</p>
           <p className="text-sm font-semibold opacity-80 mt-1">
@@ -80,21 +74,21 @@ function ModelResultCard({ title, icon: Icon, detail, verdict, verdictConfidence
         </div>
       )}
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2.5 rounded-xl bg-slate-100 border border-slate-200">
-          <Icon className="w-6 h-6 text-slate-700" />
+        <div className="p-2.5 rounded-xl bg-smoke border border-extra-light-gray">
+          <Icon className="w-6 h-6 text-extra-dark-gray" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-slate-900">{title}</h3>
-          <p className="text-xs text-slate-500 font-medium">Single-model inference</p>
+          <h3 className="text-lg font-black text-extra-dark-gray">{title}</h3>
+          <p className="text-xs text-gray-warm font-medium">Single-model inference</p>
         </div>
       </div>
 
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Confidence</p>
-          <p className="text-4xl font-black text-slate-900">
+          <p className="text-xs font-bold uppercase tracking-wider text-light-gray mb-1">Confidence</p>
+          <p className="text-4xl font-black text-apron-black">
             {pct}
-            <span className="text-lg font-bold text-slate-400">%</span>
+            <span className="text-lg font-bold text-light-gray">%</span>
           </p>
         </div>
         <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider ${badgeClass(tone)}`}>
@@ -102,14 +96,14 @@ function ModelResultCard({ title, icon: Icon, detail, verdict, verdictConfidence
         </span>
       </div>
 
-      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-4">
+      <div className="h-2 w-full bg-smoke rounded-full overflow-hidden mb-4">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${Math.min(100, parseFloat(pct))}%` }}
-          className={`h-full ${detail.is_real ? 'bg-emerald-500' : 'bg-rose-500'}`}
+          className={`h-full ${detail.is_real ? 'bg-green-warm' : 'bg-notice-red'}`}
         />
       </div>
-      <p className="text-sm text-slate-600">{liveHint}</p>
+      <p className="text-sm text-dark-gray">{liveHint}</p>
     </div>
   );
 }
@@ -190,63 +184,69 @@ export default function App() {
     switch (verdict) {
       case 'REAL':
         return {
-          icon: <ShieldCheck className="w-8 h-8 text-emerald-600" />,
-          bg: 'bg-emerald-50',
-          border: 'border-emerald-200',
-          text: 'text-emerald-900',
+          icon: <ShieldCheck className="w-8 h-8 text-green-warm" />,
+          compound: 'verdict-real',
           label: 'Authentic Access Granted'
         };
       case 'SPOOF':
         return {
-          icon: <ShieldAlert className="w-8 h-8 text-rose-600" />,
-          bg: 'bg-rose-50',
-          border: 'border-rose-200',
-          text: 'text-rose-900',
+          icon: <ShieldAlert className="w-8 h-8 text-notice-red" />,
+          compound: 'verdict-spoof',
           label: 'Security Threat Detected'
         };
       case 'ERROR':
         return {
-          icon: <ShieldAlert className="w-8 h-8 text-slate-700" />,
-          bg: 'bg-slate-100',
-          border: 'border-slate-300',
-          text: 'text-slate-900',
+          icon: <ShieldAlert className="w-8 h-8 text-notice-red" />,
+          compound: 'verdict-error',
           label: 'Inference or API error — check backend logs'
         };
       default:
         return {
-          icon: <Info className="w-8 h-8 text-amber-600" />,
-          bg: 'bg-amber-50',
-          border: 'border-amber-200',
-          text: 'text-amber-900',
+          icon: <Info className="w-8 h-8 text-brown" />,
+          compound: 'verdict-warn',
           label: 'Inconclusive or skipped (e.g. no detection)'
         };
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center py-12 px-4 selection:bg-slate-200">
+    <div
+      className="min-h-screen flex flex-col items-center py-12 px-4 selection:bg-extra-light-gray"
+      style={{ background: '#F4F3F1' }}
+    >
+      {/* back nav */}
+      <div className="w-full max-w-3xl mb-6">
+        <Link to="/">
+          <motion.div
+            whileHover={{ x: -3 }}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-warm hover:text-orange transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to home
+          </motion.div>
+        </Link>
+      </div>
       <div className="max-w-3xl w-full">
         <header className="text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-slate-200 mb-6"
+            className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-extra-light-gray mb-6"
           >
-            <ScanFace className="w-8 h-8 text-slate-800" />
+            <ScanFace className="w-8 h-8 text-orange" />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl font-extrabold tracking-tight text-slate-900 mb-3"
+            className="text-4xl font-extrabold tracking-tight text-apron-black mb-3"
           >
-            Anti-Spoofing <span className="text-slate-500 font-medium">Detection Platform</span>
+            Anti-Spoofing <span className="text-gray-warm font-medium">Detection Platform</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-slate-500 font-medium"
+            className="text-gray-warm font-medium"
           >
             Pick a model — results show that source only (consensus fuses both)
           </motion.p>
@@ -255,14 +255,14 @@ export default function App() {
         <div className="space-y-6">
           <motion.div layout className="card-premium p-6 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="flex items-center gap-2 text-slate-700 font-bold">
-                <Layers className="w-5 h-5 text-slate-500" />
+              <div className="flex items-center gap-2 text-extra-dark-gray font-bold">
+                <Layers className="w-5 h-5 text-gray-warm" />
                 Model
               </div>
               <select
                 value={mode}
                 onChange={(e) => setMode(e.target.value)}
-                className="w-full sm:max-w-md border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold bg-white text-slate-800 shadow-sm"
+                className="w-full sm:max-w-md border border-extra-light-gray rounded-lg px-3 py-2.5 text-sm font-semibold bg-white text-apron-black shadow-sm"
               >
                 {MODEL_OPTIONS.map((m) => (
                   <option key={m.value} value={m.value}>
@@ -271,10 +271,10 @@ export default function App() {
                 ))}
               </select>
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              <strong className="text-slate-600">Hugging Face</strong> shows only the ViT output;{' '}
-              <strong className="text-slate-600">Roboflow</strong> shows only the YOLO output;{' '}
-              <strong className="text-slate-600">Consensus</strong> shows the fused verdict plus a short summary of
+            <p className="text-xs text-gray-warm leading-relaxed">
+              <strong className="text-dark-gray">Hugging Face</strong> shows only the ViT output;{' '}
+              <strong className="text-dark-gray">Roboflow</strong> shows only the YOLO output;{' '}
+              <strong className="text-dark-gray">Consensus</strong> shows the fused verdict plus a short summary of
               both. Re-upload after switching models.
             </p>
           </motion.div>
@@ -283,7 +283,7 @@ export default function App() {
             <div
               {...getRootProps()}
               className={`relative border-2 border-dashed rounded-xl py-12 px-6 text-center transition-all duration-300 cursor-pointer
-                ${isDragActive ? 'border-slate-900 bg-slate-50' : 'border-slate-200 hover:border-slate-400 hover:bg-slate-50/50'}`}
+                ${isDragActive ? 'border-orange bg-ivory' : 'border-extra-light-gray hover:border-light-gray hover:bg-ivory/70'}`}
             >
               <input {...getInputProps()} />
 
@@ -302,11 +302,11 @@ export default function App() {
                         alt="Preview"
                         className="h-64 w-64 object-cover rounded-xl shadow-lg border-2 border-white ring-1 ring-slate-200 mb-6"
                       />
-                      <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                      <div className="absolute inset-0 bg-[#1C1A10]/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                         <p className="text-white text-sm font-semibold">Click to change</p>
                       </div>
                     </div>
-                    <p className="text-sm font-semibold text-slate-500">Image captured</p>
+                    <p className="text-sm font-semibold text-gray-warm">Image captured</p>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -316,11 +316,11 @@ export default function App() {
                     exit={{ opacity: 0 }}
                     className="flex flex-col items-center py-4"
                   >
-                    <div className="p-4 bg-slate-100 rounded-full mb-4">
-                      <Upload className="w-8 h-8 text-slate-600" />
+                    <div className="p-4 bg-smoke rounded-full mb-4">
+                      <Upload className="w-8 h-8 text-dark-gray" />
                     </div>
-                    <p className="text-xl font-bold text-slate-800">Drop analysis source</p>
-                    <p className="text-sm text-slate-500 mt-2">Using: {selectedLabel}</p>
+                    <p className="text-xl font-bold text-extra-dark-gray">Drop analysis source</p>
+                    <p className="text-sm text-gray-warm mt-2">Using: {selectedLabel}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -333,16 +333,16 @@ export default function App() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-slate-900 rounded-2xl p-6 text-white overflow-hidden relative shadow-xl"
+                className="bg-apron-black rounded-2xl p-6 text-white overflow-hidden relative shadow-xl"
               >
                 <div className="flex items-center space-x-4 relative z-10">
-                  <RefreshCcw className="w-6 h-6 animate-spin text-emerald-400" />
+                  <RefreshCcw className="w-6 h-6 animate-spin text-green-warm" />
                   <div>
                     <h3 className="font-bold">Analyzing…</h3>
-                    <p className="text-xs text-slate-400 font-mono tracking-widest uppercase">{selectedLabel}</p>
+                    <p className="text-xs text-[#BAB8AC] font-mono tracking-widest uppercase">{selectedLabel}</p>
                   </div>
                 </div>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#8CA40510] rounded-full blur-3xl -mr-16 -mt-16" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -379,7 +379,7 @@ export default function App() {
                     {(() => {
                       const details = getVerdictDetails(result.verdict);
                       return (
-                        <div className={`p-8 rounded-2xl border ${details.bg} ${details.border} ${details.text} shadow-sm`}>
+                        <div className={`p-8 rounded-2xl border ${details.compound} shadow-sm`}>
                           <div className="flex items-start justify-between gap-4">
                             <div>
                               <div className="flex items-center space-x-3 mb-2">
@@ -402,16 +402,16 @@ export default function App() {
                       );
                     })()}
 
-                    <div className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm">
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                    <div className="rounded-2xl border border-extra-light-gray bg-white/80 p-5 shadow-sm">
+                      <p className="text-xs font-bold uppercase tracking-wider text-light-gray mb-3">
                         Inputs to consensus
                       </p>
                       <div className="space-y-3 text-sm">
-                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50 px-4 py-3 border border-slate-100">
-                          <span className="font-bold text-slate-700 flex items-center gap-2">
-                            <Binary className="w-4 h-4 text-slate-400" /> ViT
+                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-smoke px-4 py-3 border border-extra-light-gray">
+                          <span className="font-bold text-extra-dark-gray flex items-center gap-2">
+                            <Binary className="w-4 h-4 text-light-gray" /> ViT
                           </span>
-                          <span className="text-slate-600">
+                          <span className="text-dark-gray">
                             <span className={`font-bold ${badgeClass(badgeTone(result.details.huggingface.is_real, result.details.huggingface.raw_label))} px-2 py-0.5 rounded`}>
                               {result.details.huggingface.raw_label}
                             </span>
@@ -420,11 +420,11 @@ export default function App() {
                             </span>
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50 px-4 py-3 border border-slate-100">
-                          <span className="font-bold text-slate-700 flex items-center gap-2">
-                            <ScanFace className="w-4 h-4 text-slate-400" /> YOLO
+                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-smoke px-4 py-3 border border-extra-light-gray">
+                          <span className="font-bold text-extra-dark-gray flex items-center gap-2">
+                            <ScanFace className="w-4 h-4 text-light-gray" /> YOLO
                           </span>
-                          <span className="text-slate-600">
+                          <span className="text-dark-gray">
                             <span className={`font-bold ${badgeClass(badgeTone(result.details.roboflow.is_real, result.details.roboflow.raw_label))} px-2 py-0.5 rounded`}>
                               {result.details.roboflow.raw_label}
                             </span>
@@ -439,31 +439,31 @@ export default function App() {
                 )}
 
                 {showXaiPanel && (
-                  <div className="card-premium p-6 border border-violet-100 bg-violet-50/40">
-                    <div className="flex items-center gap-2 mb-3 text-violet-900 font-bold">
-                      <Sparkles className="w-5 h-5" />
+                  <div className="card-premium p-6 border border-[#A2765230] bg-light-yellow/60">
+                    <div className="flex items-center gap-2 mb-3 text-extra-dark-gray font-bold">
+                      <Sparkles className="w-5 h-5 text-brown" />
                       XAI — ViT Grad-CAM
                     </div>
                     {xaiLoading && (
-                      <p className="text-sm text-violet-700 animate-pulse">Generating saliency overlay…</p>
+                      <p className="text-sm text-brown animate-pulse">Generating saliency overlay…</p>
                     )}
-                    {xaiError && <p className="text-sm text-amber-800 break-words">{xaiError}</p>}
+                    {xaiError && <p className="text-sm text-brown break-words">{xaiError}</p>}
                     {xaiImage && (
                       <div className="space-y-2">
                         {xaiLabel && (
-                          <p className="text-xs font-mono text-violet-800">ViT top class: {xaiLabel}</p>
+                          <p className="text-xs font-mono text-dark-gray">ViT top class: {xaiLabel}</p>
                         )}
                         <img
                           src={xaiImage}
                           alt="Grad-CAM overlay"
-                          className="w-full max-h-80 object-contain rounded-xl border border-violet-200 shadow-sm bg-white"
+                          className="w-full max-h-80 object-contain rounded-xl border border-[#A2765230] shadow-sm bg-white"
                         />
                       </div>
                     )}
                   </div>
                 )}
 
-                <div className="flex items-center justify-center space-x-2 text-slate-400 text-xs py-4">
+                <div className="flex items-center justify-center space-x-2 text-light-gray text-xs py-4">
                   <Info className="w-3 h-3 shrink-0" />
                   <span>Consensus uses YOLO as the primary gatekeeper; single-model modes show that pipeline only.</span>
                 </div>

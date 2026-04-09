@@ -1,30 +1,84 @@
 @import "tailwindcss";
 
-:root {
-  --color-brand: #0f172a;
-  --color-accent: #10b981;
-  --color-accent-soft: #ecfdf5;
-  --color-danger: #ef4444;
-  --color-danger-soft: #fef2f2;
+@theme {
+  /* Pastel system: squid-ink base + periwinkle/mint accents */
+  --color-ivory: #FAFAFC;
+  --color-light-yellow: #EEF2FF;
+  --color-smoke: #F3F5FA;
+  --color-extra-light-gray: #E3E7F2;
+  --color-light-gray: #A7AFC3;
+  --color-gray-warm: #77819A;
+  --color-dark-gray: #5A637A;
+  --color-extra-dark-gray: #3A4256;
+  --color-apron-black: #0B1020;
+  /* keep token name `orange` for existing class usage (now periwinkle) */
+  --color-orange: #AFC3FF;
+  --color-green-warm: #A7E6D2;
+  --color-brown: #C7B8FF;
+  --color-favorite-pink: #F2B6D2;
+  --color-notice-red: #F4B8B8;
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-ivory text-apron-black antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans CJK JP", sans-serif;
   }
 }
 
 @layer components {
+  /* cards: thin border, no heavy shadow */
   .card-premium {
-    @apply bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300;
+    @apply bg-white border border-extra-light-gray rounded-2xl transition-all duration-200 hover:border-light-gray;
   }
 
   .btn-primary {
-    @apply px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl transition-all duration-200 hover:bg-slate-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-full bg-orange text-white font-bold text-sm
+           transition-all duration-150 hover:opacity-90 active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
   .stat-card {
-    @apply p-4 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-between;
+    @apply p-4 bg-smoke border border-extra-light-gray rounded-xl flex items-center justify-between;
   }
+
+  /* squid-ink pastel hover */
+  .card-ink {
+    @apply bg-ivory border border-extra-light-gray rounded-2xl transition-all duration-200;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-ink::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 180ms ease;
+    background:
+      radial-gradient(700px 320px at 20% 15%, color-mix(in oklab, var(--color-orange) 22%, transparent) 0%, transparent 60%),
+      radial-gradient(560px 260px at 85% 85%, color-mix(in oklab, var(--color-green-warm) 22%, transparent) 0%, transparent 62%);
+    pointer-events: none;
+  }
+
+  .card-ink:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklab, var(--color-orange) 38%, var(--color-extra-light-gray));
+    box-shadow: 0 18px 50px rgba(11, 16, 32, 0.12);
+  }
+
+  .card-ink:hover::before {
+    opacity: 1;
+  }
+
+  /* badges */
+  .badge-real  { @apply bg-[#8ED7BE26] text-[#2E6D5B] font-bold; }
+  .badge-spoof { @apply bg-[#F0A6A626] text-[#8A3D3D] font-bold; }
+  .badge-warn  { @apply bg-[#AFC3FF26] text-[#3D4A8A] font-bold; }
+
+  /* verdict blocks */
+  .verdict-real  { @apply bg-[#8ED7BE14] border-[#8ED7BE55] text-extra-dark-gray; }
+  .verdict-spoof { @apply bg-[#F0A6A614] border-[#F0A6A655] text-apron-black; }
+  .verdict-error { @apply bg-smoke border-extra-light-gray text-apron-black; }
+  .verdict-warn  { @apply bg-[#AFC3FF14] border-[#AFC3FF55] text-extra-dark-gray; }
 }
