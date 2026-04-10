@@ -5,7 +5,7 @@ export const Avatar = React.forwardRef(function Avatar({ className, ...props }, 
   return (
     <div
       ref={ref}
-      className={cn('relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border border-border', className)}
+      className={cn('relative flex h-[var(--icon-md)] w-[var(--icon-md)] shrink-0 overflow-hidden rounded-[var(--radius-full)] border border-border', className)}
       {...props}
     />
   );

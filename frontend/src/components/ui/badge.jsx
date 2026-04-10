@@ -14,7 +14,7 @@ export const Badge = React.forwardRef(function Badge({ className, variant = 'def
     <span
       ref={ref}
       className={cn(
-        'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold',
+        'inline-flex items-center rounded-[var(--radius-full)] px-[var(--space-3)] py-[var(--space-1)] text-xs font-semibold',
         variants[variant] ?? variants.default,
         className,
       )}

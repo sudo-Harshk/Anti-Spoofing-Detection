@@ -46,7 +46,7 @@ export function AccordionTrigger({ className, children, _value, ...props }) {
       onClick={toggle}
       aria-expanded={isOpen}
       className={cn(
-        'w-full flex items-center justify-between gap-4 p-6 text-left',
+        'w-full flex items-center justify-between gap-4 p-[var(--space-5)] text-left cursor-pointer',
         'text-text font-semibold',
         className,
       )}
@@ -64,7 +64,7 @@ export function AccordionContent({ className, children, _value, ...props }) {
   return (
     <div
       hidden={!isOpen}
-      className={cn('px-6 pb-6 text-sm text-muted leading-relaxed', className)}
+      className={cn('px-[var(--space-5)] pb-[var(--space-5)] text-sm text-muted leading-[var(--leading-body)]', className)}
       {...props}
     >
       {children}

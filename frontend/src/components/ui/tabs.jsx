@@ -27,7 +27,7 @@ export function TabsList({ className, ...props }) {
   return (
     <div
       role="tablist"
-      className={cn('inline-flex items-center gap-2 rounded-full bg-white/70 border border-border p-1', className)}
+      className={cn('inline-flex items-center gap-2 rounded-[var(--radius-full)] bg-white/70 border border-border p-[var(--space-1)]', className)}
       {...props}
     />
   );
@@ -45,7 +45,7 @@ export function TabsTrigger({ value, className, children, ...props }) {
       aria-selected={selected}
       onClick={() => ctx.setValue(value)}
       className={cn(
-        'h-9 px-4 rounded-full text-sm font-semibold transition-colors',
+        'h-9 px-[var(--space-4)] rounded-[var(--radius-full)] text-sm font-semibold transition-colors cursor-pointer',
         selected ? 'bg-primary text-white' : 'text-text hover:bg-white',
         className,
       )}

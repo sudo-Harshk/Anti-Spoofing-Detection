@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -214,17 +213,6 @@ export default function App() {
       className="min-h-screen flex flex-col items-center py-12 px-4 selection:bg-extra-light-gray"
       style={{ background: '#F4F3F1' }}
     >
-      {/* back nav */}
-      <div className="w-full max-w-3xl mb-6">
-        <Link to="/">
-          <motion.div
-            whileHover={{ x: -3 }}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-warm hover:text-orange transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to home
-          </motion.div>
-        </Link>
-      </div>
       <div className="max-w-3xl w-full">
         <header className="text-center mb-12">
           <motion.div
@@ -240,7 +228,7 @@ export default function App() {
             transition={{ delay: 0.1 }}
             className="text-4xl font-extrabold tracking-tight text-apron-black mb-3"
           >
-            Anti-Spoofing <span className="text-gray-warm font-medium">Detection Platform</span>
+            Axon <span className="text-gray-warm font-medium">Anti-Spoofing</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -248,7 +236,7 @@ export default function App() {
             transition={{ delay: 0.2 }}
             className="text-gray-warm font-medium"
           >
-            Pick a model — results show that source only (consensus fuses both)
+            Your AI shield against deepfakes. Choose single or dual-mode protection.
           </motion.p>
         </header>
 
