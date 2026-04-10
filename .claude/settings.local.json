@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "WebFetch(domain:pulse.heartbeat.ua)"
+      "WebFetch(domain:pulse.heartbeat.ua)",
+      "Bash(python3 -c ':*)",
+      "Bash(node -e ':*)"
     ]
   }
 }

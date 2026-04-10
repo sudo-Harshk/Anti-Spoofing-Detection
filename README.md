@@ -1,6 +1,6 @@
-# Anti-Spoofing Detection Platform
+# Axon Anti-Spoofing Detection Platform
 
-Dual-model face anti-spoofing: a **Vision Transformer (ViT)** on Hugging Face plus a **YOLO**-style detector on Roboflow, with optional **hierarchical consensus**, **ablation modes**, **Grad-CAM (XAI)** on the ViT, and a **benchmark CLI** (APCER / BPCER / ACER) for thesis-style evaluation.
+Advanced face anti-spoofing system combining **Vision Transformer (ViT)** and **YOLO** detection models with intelligent consensus fusion and explainable AI.
 
 ## Project structure
 
@@ -10,7 +10,7 @@ Dual-model face anti-spoofing: a **Vision Transformer (ViT)** on Hugging Face pl
 | `backend/engine.py` | Shared inference, HF label mapping, consensus & ablation, metric helpers |
 | `backend/benchmark.py` | CLI: APCER / BPCER / ACER on folder-organized live vs spoof sets |
 | `backend/xai_vit.py` | ViT Grad-CAM → base64 PNG (used by `/api/explain`) |
-| `frontend/` | React + Vite UI |
+| `frontend/` | React + Vite UI (single-page application) |
 | `datasets/live/`, `datasets/spoof/` | Local folders for benchmark images (see note below) |
 
 **Note:** This repo’s `.gitignore` may ignore common image extensions. Keep benchmark images on disk under `datasets/` locally; only placeholders like `.gitkeep` need to be committed.
@@ -79,7 +79,7 @@ npm run dev
 ## Using the web UI
 
 1. Run **backend** and **frontend** together.
-2. Open the app (e.g. `http://localhost:5173`).
+2. Open the application (e.g. `http://localhost:5173`).
 3. Under **Model**, choose:
    - **Hugging Face (ViT)** — shows **only** the ViT outcome (confidence, label, bar) and **ViT Grad-CAM** after upload.
    - **Roboflow (YOLO)** — shows **only** the YOLO outcome; **no** Grad-CAM call (XAI is ViT-specific).
@@ -88,17 +88,12 @@ npm run dev
 
 Grad-CAM needs the `grad-cam` package (`requirements.txt`). If `/api/explain` fails, the UI shows the API **`detail`** message when available.
 
-## Research benchmark (thesis metrics)
+## Documentation
 
-From `backend/`, with images in local folders:
+For detailed technical documentation, see the `docs/` folder:
 
-```bash
-python benchmark.py --live-dir ../datasets/live --spoof-dir ../datasets/spoof --mode consensus
-python benchmark.py --live-dir ../datasets/live --spoof-dir ../datasets/spoof --mode vit_only
-python benchmark.py --live-dir ../datasets/live --spoof-dir ../datasets/spoof --mode yolo_only --out-csv ../results_ablation.csv
-```
-
-**APCER**, **BPCER**, and **ACER** use only samples whose verdict is **REAL** or **SPOOF**. Counts of **INCONCLUSIVE** and **ERROR** are printed separately and are **not** in those denominators.
+- **[Architecture Documentation](docs/architecture.md)** - System design, model components, and technical stack
+- **[Research Benchmarks](docs/research-benchmarks.md)** - Academic evaluation metrics and benchmarking tools
 
 ## API reference
 
@@ -107,7 +102,3 @@ python benchmark.py --live-dir ../datasets/live --spoof-dir ../datasets/spoof --
 | `POST /api/dual_antispoof` | Multipart: `image` (file), `mode` = `consensus` \| `vit_only` \| `yolo_only`. JSON: `verdict`, `confidence`, `mode`, `details.huggingface`, `details.roboflow`. |
 | `POST /api/explain` | Multipart: `image`. JSON: `overlay_base64` (PNG), `predicted_label`, etc. ViT Grad-CAM; requires `grad-cam`. |
 | `GET /health` | Liveness + model ids + `roboflow_setup` + supported modes. |
-
-## More documentation
-
-- `plan/PROPOSED_ADDITIONS.md` — research modules (metrics, XAI, ablation) and status.
