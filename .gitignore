@@ -136,3 +136,5 @@ temp/
 
 *.pptx
 *.pdf
+
+backend/benchmark_results.json
