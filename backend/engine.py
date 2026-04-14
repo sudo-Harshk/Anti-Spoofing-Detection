@@ -189,15 +189,45 @@ def run_dual_analysis(
     else:
         verdict, confidence = _consensus_verdict(hf_res, rf_res)
 
+    attack_type = classify_attack_type(
+        hf_res.get("raw_label", ""),
+        rf_display.get("raw_label", ""),
+        verdict,
+    )
+
     return {
         "verdict": verdict,
         "confidence": round(float(confidence), 4),
         "mode": mode,
+        "attack_type": attack_type,
         "details": {
             "huggingface": hf_res,
             "roboflow": rf_display,
         },
     }
+
+
+_ATTACK_TYPE_HINTS: list[tuple[str, str]] = [
+    ("deepfake", "AI Deepfake"),
+    ("deep_fake", "AI Deepfake"),
+    ("print", "Printed Photo"),
+    ("mask", "3D Mask"),
+    ("screen", "Screen Replay"),
+    ("replay", "Screen Replay"),
+]
+
+
+def classify_attack_type(hf_raw: str, rf_raw: str, verdict: str) -> str | None:
+    """Returns human-readable attack category when verdict is SPOOF, else None."""
+    if verdict != "SPOOF":
+        return None
+    for hint, attack in _ATTACK_TYPE_HINTS:
+        if hint in (hf_raw or "").lower():
+            return attack
+    for hint, attack in _ATTACK_TYPE_HINTS:
+        if hint in (rf_raw or "").lower():
+            return attack
+    return "Presentation Attack"
 
 
 def prediction_is_live(verdict: str) -> bool | None:

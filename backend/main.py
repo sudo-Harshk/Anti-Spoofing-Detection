@@ -1,7 +1,9 @@
+import json
 import os
 import asyncio
 import traceback
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
@@ -144,6 +146,18 @@ async def explain_vit(image: UploadFile = File(...)):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"XAI failed: {e}") from e
     return payload
+
+
+@app.get("/api/benchmark_results")
+def get_benchmark_results():
+    results_path = Path(__file__).parent / "benchmark_results.json"
+    if not results_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Benchmark results not found. Run: python run_benchmark_all.py",
+        )
+    with open(results_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 if __name__ == "__main__":
